@@ -13,3 +13,6 @@ For example, you could transform a translation in X of a source object from 0-1 
 ## In the Pipe
 Currently working on a simplistic RBF solver. This GIF shows a monobehaviour prototype, not an actual constraint [yet].
 <img src="https://i.imgur.com/aB1VqGX.gif" />
+
+## Todo
+I appear to only be able to get rotation values in the range of [0,360], which makes extrapolation of rotational values impossible past a single revolution. Will investigate.
