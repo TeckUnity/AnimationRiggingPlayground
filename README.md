@@ -15,4 +15,3 @@ Currently working on a simplistic RBF solver. This GIF shows a monobehaviour pro
 <img src="https://i.imgur.com/aB1VqGX.gif" />
 
 ## Todo
-I appear to only be able to get rotation values in the range of [0,360], which makes extrapolation of rotational values impossible past a single revolution. Will investigate.
