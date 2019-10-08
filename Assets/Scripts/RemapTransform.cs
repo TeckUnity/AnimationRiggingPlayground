@@ -26,7 +26,13 @@ public struct RemapTransformJob : IWeightedAnimationJob
     public Space fromSpace;
     public Space toSpace;
 
+    public float3 offsetPos;
+    public float3 offsetRot;
+
     public FloatProperty jobWeight { get; set; }
+
+    public float3 lastRotation;
+    private float3 revolutions;
 
     public void ProcessRootMotion(UnityEngine.Animations.AnimationStream stream) { }
 
@@ -35,7 +41,27 @@ public struct RemapTransformJob : IWeightedAnimationJob
         float w = jobWeight.Get(stream);
         if (w > 0f)
         {
+<<<<<<< Updated upstream
             var v = sourceMapping == TransformMapping.Location ? source.GetLocalPosition(stream) : sourceMapping == TransformMapping.Rotation ? source.GetLocalRotation(stream).eulerAngles : source.GetLocalScale(stream);
+=======
+            float3 v = sourceMapping == TransformMapping.Location ? source.GetLocalPosition(stream) : sourceMapping == TransformMapping.Rotation ? source.GetLocalRotation(stream).eulerAngles : source.GetLocalScale(stream);
+            if (sourceMapping == TransformMapping.Rotation)
+            {
+                if (math.abs(v.x - lastRotation.x) > 180)
+                {
+                    revolutions += math.sign(v.x - lastRotation.x);
+                }
+                if (math.abs(v.y - lastRotation.y) > 180)
+                {
+                    revolutions += math.sign(v.y - lastRotation.y);
+                }
+                if (math.abs(v.z - lastRotation.z) > 180)
+                {
+                    revolutions += math.sign(v.z - lastRotation.z);
+                }
+            }
+            v -= revolutions * 360;
+>>>>>>> Stashed changes
             var x = xMapping.sqrMagnitude > 0 ? math.remap(xMapping.x, xMapping.y, xMapping.z, xMapping.w, math.dot(v, toX)) : 0;
             var y = yMapping.sqrMagnitude > 0 ? math.remap(yMapping.x, yMapping.y, yMapping.z, yMapping.w, math.dot(v, toY)) : 0;
             var z = zMapping.sqrMagnitude > 0 ? math.remap(zMapping.x, zMapping.y, zMapping.z, zMapping.w, math.dot(v, toZ)) : 0;
@@ -48,15 +74,16 @@ public struct RemapTransformJob : IWeightedAnimationJob
             switch (destinationMapping)
             {
                 case TransformMapping.Location:
-                    destination.SetLocalPosition(stream, new float3(x, y, z));
+                    destination.SetLocalPosition(stream, offsetPos + new float3(x, y, z));
                     break;
                 case TransformMapping.Rotation:
-                    destination.SetLocalRotation(stream, Quaternion.Euler(new float3(x, y, z)));
+                    destination.SetLocalRotation(stream, Quaternion.Euler(offsetRot + new float3(x, y, z)));
                     break;
                 case TransformMapping.Scale:
                     destination.SetLocalScale(stream, new float3(x, y, z));
                     break;
             }
+            lastRotation = source.GetLocalRotation(stream).eulerAngles;
         }
     }
 }
@@ -121,6 +148,10 @@ public class RemapTransformBinder : AnimationJobBinder<RemapTransformJob, RemapT
 
             sourceMapping = data.sourceMapping,
             destinationMapping = data.destinationMapping,
+
+            offsetPos = data.destinationObject.localPosition,
+            offsetRot = data.destinationObject.localEulerAngles,
+            lastRotation = data.sourceObject.localEulerAngles,
 
             extrapolate = data.m_Extrapolate,
             toX = Convert(data.toX),
