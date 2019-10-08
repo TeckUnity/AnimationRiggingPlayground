@@ -36,9 +36,9 @@ public struct RemapTransformJob : IWeightedAnimationJob
         if (w > 0f)
         {
             var v = sourceMapping == TransformMapping.Location ? source.GetLocalPosition(stream) : sourceMapping == TransformMapping.Rotation ? source.GetLocalRotation(stream).eulerAngles : source.GetLocalScale(stream);
-            var x = math.remap(xMapping.x, xMapping.y, xMapping.z, xMapping.w, math.dot(v, toX));
-            var y = math.remap(yMapping.x, yMapping.y, yMapping.z, yMapping.w, math.dot(v, toY));
-            var z = math.remap(zMapping.x, zMapping.y, zMapping.z, zMapping.w, math.dot(v, toZ));
+            var x = xMapping.sqrMagnitude > 0 ? math.remap(xMapping.x, xMapping.y, xMapping.z, xMapping.w, math.dot(v, toX)) : 0;
+            var y = yMapping.sqrMagnitude > 0 ? math.remap(yMapping.x, yMapping.y, yMapping.z, yMapping.w, math.dot(v, toY)) : 0;
+            var z = zMapping.sqrMagnitude > 0 ? math.remap(zMapping.x, zMapping.y, zMapping.z, zMapping.w, math.dot(v, toZ)) : 0;
             if (!extrapolate)
             {
                 x = math.clamp(x, math.min(xMapping.z, xMapping.w), math.max(xMapping.z, xMapping.w));
@@ -126,9 +126,9 @@ public class RemapTransformBinder : AnimationJobBinder<RemapTransformJob, RemapT
             toX = Convert(data.toX),
             toY = Convert(data.toY),
             toZ = Convert(data.toZ),
-            xMapping = new float4(fromRange[(int)data.toX].x, fromRange[(int)data.toX].y, data.toXRange.x, data.toXRange.y),
-            yMapping = new float4(fromRange[(int)data.toY].x, fromRange[(int)data.toY].y, data.toYRange.x, data.toYRange.y),
-            zMapping = new float4(fromRange[(int)data.toZ].x, fromRange[(int)data.toZ].y, data.toZRange.x, data.toZRange.y)
+            xMapping = fromRange[(int)data.toX].sqrMagnitude > 0 ? new float4(fromRange[(int)data.toX].x, fromRange[(int)data.toX].y, data.toXRange.x, data.toXRange.y) : new float4(0, 0, 0, 0),
+            yMapping = fromRange[(int)data.toY].sqrMagnitude > 0 ? new float4(fromRange[(int)data.toY].x, fromRange[(int)data.toY].y, data.toYRange.x, data.toYRange.y) : new float4(0, 0, 0, 0),
+            zMapping = fromRange[(int)data.toZ].sqrMagnitude > 0 ? new float4(fromRange[(int)data.toZ].x, fromRange[(int)data.toZ].y, data.toZRange.x, data.toZRange.y) : new float4(0, 0, 0, 0)
         };
     }
 
