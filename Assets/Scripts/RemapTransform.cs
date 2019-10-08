@@ -41,9 +41,6 @@ public struct RemapTransformJob : IWeightedAnimationJob
         float w = jobWeight.Get(stream);
         if (w > 0f)
         {
-<<<<<<< Updated upstream
-            var v = sourceMapping == TransformMapping.Location ? source.GetLocalPosition(stream) : sourceMapping == TransformMapping.Rotation ? source.GetLocalRotation(stream).eulerAngles : source.GetLocalScale(stream);
-=======
             float3 v = sourceMapping == TransformMapping.Location ? source.GetLocalPosition(stream) : sourceMapping == TransformMapping.Rotation ? source.GetLocalRotation(stream).eulerAngles : source.GetLocalScale(stream);
             if (sourceMapping == TransformMapping.Rotation)
             {
@@ -61,7 +58,6 @@ public struct RemapTransformJob : IWeightedAnimationJob
                 }
             }
             v -= revolutions * 360;
->>>>>>> Stashed changes
             var x = xMapping.sqrMagnitude > 0 ? math.remap(xMapping.x, xMapping.y, xMapping.z, xMapping.w, math.dot(v, toX)) : 0;
             var y = yMapping.sqrMagnitude > 0 ? math.remap(yMapping.x, yMapping.y, yMapping.z, yMapping.w, math.dot(v, toY)) : 0;
             var z = zMapping.sqrMagnitude > 0 ? math.remap(zMapping.x, zMapping.y, zMapping.z, zMapping.w, math.dot(v, toZ)) : 0;
