@@ -126,9 +126,9 @@ public class RemapTransformBinder : AnimationJobBinder<RemapTransformJob, RemapT
             toX = Convert(data.toX),
             toY = Convert(data.toY),
             toZ = Convert(data.toZ),
-            xMapping = fromRange[(int)data.toX].sqrMagnitude > 0 ? new float4(fromRange[(int)data.toX].x, fromRange[(int)data.toX].y, data.toXRange.x, data.toXRange.y) : new float4(0, 0, 0, 0),
-            yMapping = fromRange[(int)data.toY].sqrMagnitude > 0 ? new float4(fromRange[(int)data.toY].x, fromRange[(int)data.toY].y, data.toYRange.x, data.toYRange.y) : new float4(0, 0, 0, 0),
-            zMapping = fromRange[(int)data.toZ].sqrMagnitude > 0 ? new float4(fromRange[(int)data.toZ].x, fromRange[(int)data.toZ].y, data.toZRange.x, data.toZRange.y) : new float4(0, 0, 0, 0)
+            xMapping = math.abs(fromRange[(int)data.toX].x - fromRange[(int)data.toX].y) > 0 ? new float4(fromRange[(int)data.toX].x, fromRange[(int)data.toX].y, data.toXRange.x, data.toXRange.y) : new float4(0, 0, 0, 0),
+            yMapping = math.abs(fromRange[(int)data.toY].x - fromRange[(int)data.toY].y) > 0 ? new float4(fromRange[(int)data.toY].x, fromRange[(int)data.toY].y, data.toYRange.x, data.toYRange.y) : new float4(0, 0, 0, 0),
+            zMapping = math.abs(fromRange[(int)data.toZ].x - fromRange[(int)data.toZ].y) > 0 ? new float4(fromRange[(int)data.toZ].x, fromRange[(int)data.toZ].y, data.toZRange.x, data.toZRange.y) : new float4(0, 0, 0, 0)
         };
     }
 
